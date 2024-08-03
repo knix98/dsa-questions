@@ -1,0 +1,121 @@
+=> Backtracking
+    -> Used in questions where we have no other option other than to explore various paths till the end, and then upon reaching 
+        the end of each paths, determine whether this path is correct or not
+    -> Time complexity calculations in backtracking usually done in this way => suppose n^2 cells are there and there can be 4 directions
+        to move next from any cell, but dont move to previously visited cells. And we have to determine paths of length 8. So at each cell we have 
+        3 possible moves (excluding the previous visited cell) and in total we have to visit 8 cells in path and we can start from any of the n^2
+        cells => so time = (n^2) * (3^7) , because at the 8th cell we do not have to move forward further.
+    -> In backtracking, we come to a particular point thru a particular path in 1 iteration. But we might come to this same point thru a completely different path in
+        some other iteration. Hence in backtracking, always remember to unmark the current point before the current point's function call is finished. So that this 
+        point can be again revisited during another path's recursions.
+
+
+=> Recursion
+    -> Required when we have to save the answers in an array and return the array. If we just have to count the total ways
+        or max or min value only then DP might be applied.
+
+
+=> Binary Search
+    -> Can be used in situations where one of the ranges in the constraints is such that there is a step function dependency
+        of the ans over that range. 
+    -> Even if the range is very large, we can still think of binary search over this range, since logn is the time complexity.
+    -> Basically 1 of the situation for application of binary search => if you need to find minimum/maximum divide length between k
+        points such that k points can be fitted in a given range of length. Then you can do binary search over the length range for
+        finding some value and then checking whether using this value I am able to fit n points.
+    -> Be careful when deciding the if-else conditions for updating the i,j values of binary search range. Sometimes it happens that,
+        if with a value we are able to fit <k points then also we have to accept this value as an ans and move left side for binary search.
+        This is beacuse if we are able to fit < k points then the remaining points can also be accomodated in between them. But then you would say
+        that the min value would not be this value then, so that's why we are moving leftwards to find that smaller value and we will keep updating
+        the ans as long as we are able to fit <= k points.
+
+    
+=> Bit Manipulation
+    -> I think it has some questions only which are bit manipulation specific. Can have a look at them if needed to revise.
+    -> But remembering some properties of xor is important, which are written in CN CP notes
+
+
+=> Number Theory 
+    -> Atleast remember and revise sieve method for finding primes <= n (Time : O(nloglogn)) and 
+        euclidean algo for finding GCD of 2 numbers a and b (Time : O(log(min(a,b)))). 
+    -> Also look at the spf(smallest prime factor) way of finding prime factors of any number (coded in DSU -> largest_component.cpp)
+
+
+=> DSU
+    -> useful for finding cycles in graph
+    -> sometimes we identify that in a problem, DSU group making might be helpful, but instead of combine operation we have to do decombine operation.
+        In such cases, we might handle it by going over the queries backwards instead of forwards. So that we utilise the combine operation only.
+    -> Time complexity in DSU problems : O(n+m) , n for initially building DSU and m for running over m queries each taking constant time.
+
+
+=> Tree 
+    -> remember that for a graph to be a tree, 2 conditions only -> it should have n-1 edges and no cycles
+    -> if we know that a given graph is a tree, then we dont need to maintain a visited array for bfs/dfs traversals, because we
+        know that we would be going always down only (from parent to children). So we can just pass the parent node to next iteration of dfs.
+    -> for tree diameter better approach -> do dfs and at each node, keep comparing dia at ths node with a global maxDia ref variable
+        and return the height of tree at this node.
+    -> for leaves of a tree -> they should be connected to <=1 nodes only
+    -> for centre of a tree, start cutting leaves layer by layer, and the leaves which are cut in the last round of cutting are centre leaves
+        for this tree.
+
+
+=> Graph : write about how topological sorting can be used in determining the ranks and how  is so useful in such cases
+    -> BFS/DFS : time complexity : O(V+E)
+    -> to find shortest path length in unweighted graphs(directed or undirected) -> use bfs
+    -> "cutting layers of leaves technique" is helpful in questions where it is required to move from leaf nodes to upper nodes,
+        or in topological sorting questions, where we need to keep collecting node which are having outdegree == 0 in each iteration
+    -> topological sorting can be done using 2 ways : dfs and "cutting layers of leaves technique", but "cutting layers of leaves technique"
+        is specifically useful in ranking application (see topological_ranking.cpp in "Test after graph 2")
+    -> Graph 2 :-
+        -> notes regarding which algo to use when is written in CN CP hand notes in "FAI 2016 green small notebook spiral binded one"
+
+    -> Eulerian and Hamiltonian paths and circuits in graphs
+        -> Hamiltonian circuit : 
+            -> path covering all nodes only once and starting and ending at the same node
+            -> Do a dfs over the graph, starting from a source node and reach a terminal node. If there is an edge between source and last node,
+                then this path is a hamiltonian circuit (also every hamiltonian circuit is hamiltonian path also)
+        -> Hamiltonian Path :
+            -> path covering all nodes only once
+
+        -> Eulerian circuit and path : (from pepcoding youtube)
+            -> path covering all edges only once.
+            -> and for circuit, path should start and end at the same node
+
+            -> Conditions for eulerian in undirected graph :
+                -> for circuit = all n nodes should have even degree
+                -> for path = all n or n-2 nodes should have even degree
+            
+            -> Conditions for eulerian in directed graph :
+                -> for circuit = all n nodes should have indegree == outdegree
+                -> for path = the above condition same as circuit or 
+                    n-2 nodes should have indegree == outdegree 
+                    and source node should have outdegree == indegree + 1
+                    and destination node should have indegree == outdegree + 1
+
+
+=> Tries
+    -> this DS is useful in questions where you have to do something like this : store some words in a DS, so that when queries come,
+        you can match the strings efficiently. Using trie, we can do this in O(length of query string). Whereas in any other DS,
+        we would have to traverse over the DS as well first.
+    -> Another useful application of trie is in storing integers in their bits form in the trie. And then handelling the queries.
+        This can be useful in cases where something related to XOR has to be done
+
+
+=> 2-pointer/sliding-window approach
+    -> implementing 2-pointer approach is easier, intuitive when applied using this intuition : find largest/number of substrs ending at 
+        each j of the input array/string. So always use this way of implementing sliding-window only.
+
+
+=> Intervals Problems (from neetcode 150)
+    -> 2 approaches to solve problems : 
+        a. problems in which we need to find maximum overlapping intervals at any point. Like in the problem : Meeting Rooms 2
+        b. finding the longest non overlapping chain type of problem, which can be solved by just sorting the intervals array by their end/right points.
+            We sort by end-points because, amongst 2 adjacent overlapping intervals in the sorted order, we want to greedily select the one which has the earlier 
+            end-point, which gives us the space to select more non overlapping intervals on the right side.
+            Ex problem : Non overlapping intervals
+
+
+=> Arrays and hashing (from neetcode 150)
+    -> to reduce time complexity to O(n) instead of nlogn which comes in sorted order of map or set , we can decide to use a freq
+        table/vector to store sorted order if the vector size is bounded by some constraint. Ex problem = top_k_freq_elems
+    -> instead of increased time complexity for sorting string , we can use a freq table to store the freq of each char in the string
+        and then traverse the 26 or 256 sized freq table to get the sorted string. Ex problem : group_anagrams
