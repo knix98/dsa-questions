@@ -148,3 +148,25 @@ int main() {
     Solutions s;
     cout << s.findMedianSortedArrays(v1, v2);
 }
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        if(nums.size() == 1) return nums[0]; 
+
+        int n = nums.size();
+        vector<vector<int>> dp(n, vector<int>(4, 0));
+
+        dp[n-1][0] = dp[n-2][3] = nums[n-1];
+        dp[n-2][0] = dp[n-2][2] = nums[n-2];
+
+        for(int i=n-3; i>=0; i--) {
+            dp[i][0] = nums[i] + max(dp[i+2][0], dp[i+2][3]);
+            dp[i][1] = max(dp[i+1][1], dp[i+1][2]);
+            dp[i][2] = nums[i] + max(dp[i+2][1], dp[i+2][2]);
+            dp[i][3] = max(dp[i+1][0], dp[i+1][3]);
+        }
+
+        return max({dp[0][1], dp[0][2], dp[0][3]});
+    }
+};
