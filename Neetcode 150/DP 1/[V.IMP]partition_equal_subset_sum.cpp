@@ -1,0 +1,48 @@
+/*
+https://leetcode.com/problems/partition-equal-subset-sum/description/
+*/
+
+/*
+have to do a 2D DP in which we calculate for each index i whether we can make sums{0...target} using elements from index i to end only
+Time : O(n * target)
+Space : O(target)
+where target = (sum of all elems) / 2 
+
+NOTE : a tougher variation of this problem : "partition to k equal sum subsets" is saved in Backtracking chapter codes of neetcode 150
+*/
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        int n = nums.size();
+        int total = 0;
+        for(int i : nums) total += i;
+
+        if(total % 2) return false;
+        total /= 2;
+
+        vector<vector<bool>> dp(2, vector<bool>(total+1, false));
+        int curr = 0, prev = 1;
+        dp[prev][0] = true;
+
+        for(int i=n-1; i>=0; i--) {
+            for(int j=0; j<=total; j++) {
+                dp[curr][j] = false;
+                
+                // case 1 : skipping curr elem
+                if(dp[prev][j]) dp[curr][j] = true;
+                else {
+                    // case 2 : take curr elem if possible
+                    if(j - nums[i] >= 0) {
+                        dp[curr][j] = dp[prev][j-nums[i]];
+                    }
+                }
+
+                if(j == total && dp[curr][j]) return true;
+            }
+
+            swap(curr, prev);
+        }
+
+        return false;
+    }
+};

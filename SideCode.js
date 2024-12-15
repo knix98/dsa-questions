@@ -227,3 +227,40 @@ Most of the times, both BDD and TDD go hand in hand to develop well-tested and h
 
 
 */
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[][]}
+ */
+var levelOrder = function (root) {
+  if(!root) return [];
+  let q = [];
+  q.push(root);
+  q.push(null);
+
+  let ans = [];
+  let level = [];
+  while(q.length) {
+    let front = q.shift();
+    if(front) {
+      level.push(front.val)
+      if(front.left) q.push(front.left);
+      if(front.right) q.push(front.right);
+    }
+    else {
+      ans.push(level);
+      level = [];
+      if(q.length) q.push(null);
+    }
+  }
+
+  return ans
+}
