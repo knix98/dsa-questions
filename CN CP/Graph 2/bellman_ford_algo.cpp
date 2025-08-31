@@ -33,6 +33,8 @@ int bellFord(int n, int m, int src, int dest){
                     // 1. the from_node should have gotten its min_dist value (lesser than 1e9) from src node till now. 
                     // This condition would also take care of the case that if from_node and to_node belongs to a different connected component.
                     // For nodes , which are not inside the connected component of the source node, we should not do anything
+                    // the first condition is necessary because -ve edge weights are involved, so might be possible that second condition passes if first condition not
+                    // checked first
                     // 2. min_dist[from_node] + edge_weight < min_dist[to_node]
                     min_dist[to_node] = min_dist[from_node] + edge_weight;
                     changes++;
@@ -67,6 +69,7 @@ int main(){
             cin >> a >> b >> w;
 
             a--, b--;  // because I would be using 0 based indexing
+            // a graph has been used instead of a vector for storing edges, because in the question there were multiple parallel edges between 2 nodes
             if(graph[a].count(b) == 0) graph[a][b] = w;
             else if (graph[a][b] > w) graph[a][b] = w;
         }

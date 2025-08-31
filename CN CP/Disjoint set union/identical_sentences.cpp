@@ -1,4 +1,5 @@
 /*
+https://classroom.codingninjas.com/app/classroom/me/22205/content/575408/offering/8882638/problem/11506?leftPanelTabValue=PROBLEM
 Identical sentences
 
 You are given two sentences, ‘word1’ and ‘word2’, represented as an array of strings of size ‘n’ and ‘m’, respectively. You are also given an array called ‘pairs’. Each element in ‘pairs’ is of the form ‘[u, v]’ where ‘u’ and ‘v’ are strings.

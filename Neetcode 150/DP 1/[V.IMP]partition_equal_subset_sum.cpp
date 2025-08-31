@@ -8,6 +8,9 @@ Time : O(n * target)
 Space : O(target)
 where target = (sum of all elems) / 2 
 
+so from this solution code we can see that, in problems where it looks like we need to build all the subsequences and compare them, which will lead to
+2^n time, we can utilise 2D DP instead (if possible in problems of subsequences) which will reduce time to around n^2
+
 NOTE : a tougher variation of this problem : "partition to k equal sum subsets" is saved in Backtracking chapter codes of neetcode 150
 */
 class Solution {

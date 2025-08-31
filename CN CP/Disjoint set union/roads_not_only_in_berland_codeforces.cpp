@@ -1,5 +1,6 @@
 /*
     D. Roads not only in Berland => can read problem statement from codeforces
+    https://codeforces.com/problemset/problem/25/D
 */
 
 

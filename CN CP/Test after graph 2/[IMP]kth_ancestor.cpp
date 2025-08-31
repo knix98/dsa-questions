@@ -3,7 +3,7 @@ https://classroom.codingninjas.com/app/classroom/me/22205/content/575412/offerin
 */
 
 
-
+// Note : here we dont need to maintain visited array because its a tree and not a graph (so no cycles present)
 void dfs(vector<vector<int>> &tree, int node, int parent, vector<int> &dfs_path_till_now, vector<int> &ans, int k){
 
     /*

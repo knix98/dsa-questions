@@ -84,47 +84,53 @@ Sample Output 2 :
 
 
 
-// APPROACH 1 : graph approach
-void dfs(vector<vector<int>> &graph, int node, vector<bool> &visited, multiset<int> &a, multiset<int> &b, vector<int> &ninja, vector<int> &enemies){
-	visited[node] = true;
+/*
+APPROACH 1 : graph approach : first make graph of connected indices from edges given
+then traverse over a connected component and first collect all elems at these indices from enemies and then collect all elems at these indices from ninja
+and compare
 
-    // check whether the ninja elem at this index has been found in enemies previously ?
-	if(b.find(ninja[node]) == b.end()) a.insert(ninja[node]); // if no => then insert this elem in ninja multiset
-	else b.erase(b.find(ninja[node])); // if yes => then remove that elem from enemies multiset
+Time : O(n) , where n = number of elems in ninja. One could say that O(v+e), but since there are no cycles in graph so e ~ v-1
+Space : O(n)
+*/
+void traverse(vector<vector<int>> &graph, vector<int> &visited, int visitMark, vector<int> &v, int node, unordered_map<int, int> &elems) {
+    if(visitMark == 1) elems[v[node]]++;
+    else if(elems[v[node]]) elems[v[node]]--;  // decreasing count when traversing over ninja (visitMark = 2)
 
-    // now check similarly for the enemies elem at this index
-	if(a.find(enemies[node]) == a.end()) b.insert(enemies[node]);
-	else a.erase(a.find(enemies[node]));
+    visited[node] = visitMark;
 
-	for(int neighbour : graph[node]){
-		if(!visited[neighbour]) dfs(graph, neighbour, visited, a, b, ninja, enemies);
-	}
+    for(int neighbour : graph[node]) {
+        if(visited[neighbour] != visitMark) {
+            traverse(graph, visited, visitMark, v, neighbour, elems);
+        }
+    }
 }
 
 int ninjaAttack(vector<int> ninja, vector<int> enemies, vector <vector<int> >allowedSwaps)
 {
-	int n = ninja.size();
-	
-    // first make graph using allowedSwaps for connected indices
-	vector<vector<int>> graph(n);
-	for(auto v : allowedSwaps){
-		graph[v[0]].push_back(v[1]);
-		graph[v[1]].push_back(v[0]);
-	}
+    int n = ninja.size();
+    vector<vector<int>> graph(n, vector<int>(0));
+    for(auto edge : allowedSwaps) {
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
+    }
 
-	vector<bool> visited(n, false);
+    vector<int> visited(n, 0);
+    int ans = 0;  // number of elems in enemies that have no matching elem in ninja even after internal swapping in ninja
 
-	int ans = 0;
-	for(int i=0; i<n; i++){
-		if(!visited[i]){
-			multiset<int> a, b;  // multiset "a" qould contain elems at connected indices in ninja arr and "b" would contain similarly for enemies arr
-			dfs(graph, i, visited, a, b, ninja, enemies);
-			ans += a.size(); // after dfs, there would be equal elems remaining in both "a" and "b", and these elems are the ones which were
-                            // found in only 1 of the arrays but not both
-		}
-	}
+    for(int i=0; i<n; i++) {
+        if(!visited[i]) {
+            unordered_map<int, int> elems;  // in this we will store the elems found first in enemies and then found in ninja
 
-	return ans;
+            traverse(graph, visited, 1, enemies, i, elems);  // visitMark = 1 for enemies traversal
+            traverse(graph, visited, 2, ninja, i, elems);  // visitMark = 2 for ninja traversal
+
+            for(auto it : elems) {
+                ans += it.second;  // the enemies elems which were not found in ninja can be added to the ans
+            }
+        }
+    }
+
+    return ans;
 }
 
 
@@ -137,90 +143,66 @@ int ninjaAttack(vector<int> ninja, vector<int> enemies, vector <vector<int> >all
 // suppose in ninja, nums on indices 1,2,4,6 == [2,3,4,5] and in enemies [2,3,4,6], then since 1 num is different so , 1 gets added to hamming distance
 // and the indices which are not in the allowed_swap array, will form a graph with a single node only that is themselves
 class DSU {
-    vector<int> parent;
-    vector<int> setSize;
-    int n;
+public:
+    unordered_map<int, int> parent;
+    unordered_map<int, int> setSize;
 
-    public:
-    DSU(int n){
-        this->n = n;
+	DSU(vector<int> &v) {
+		for(int i : v) {
+			parent[i] = i;
+			setSize[i] = 1;
+		}
+	}
 
-        for(int i=0; i<n; i++){   // 0 based indexing from 0 to n-1
-            parent.push_back(i);
-            setSize.push_back(1);
-        }
-    }
+	int root(int u) {
+		if(parent.count(u) == 0) return -1;
 
-    int findRoot(int u){
-        while(parent[u] != u){
-            parent[u] = parent[parent[u]];
-            u = parent[u];
-        }
+		while(parent[u] != u) {
+			parent[u] = parent[parent[u]];
+			u = parent[u];
+		}
 
-        return u;
-    }
+		return u;
+	}
 
-    void combine(int u, int v){
-        int ru = findRoot(u);
-        int rv = findRoot(v);
-        
-        int combinedRoot = ru;
+	void combine(int u, int v) {
+		int ru, rv;
+		if(parent.count(u) == 0) {
+			parent[u] = ru = u;
+			setSize[u] = 1;
+		}
+		else {
+			ru = root(u);
+		}
+		if(parent.count(v) == 0) {
+			parent[v] = rv = v;
+			setSize[v] = 1;
+		}
+		else {
+			rv = root(v);
+		}
 
-        if(rv != ru){
-            if(setSize[rv] > setSize[ru]){
-                parent[ru] = rv;
-                setSize[rv] += setSize[ru];
-                combinedRoot = rv;
-            }
-            else{
-                parent[rv] = ru;
-                setSize[ru] += setSize[rv];
-                combinedRoot = ru;
-            }
-        }
-
-        parent[ru] = combinedRoot;
-        parent[rv] = combinedRoot;
-    }
+		if(setSize[ru] > setSize[rv]) {
+			parent[rv] = ru;
+			setSize[ru] += setSize[rv];
+		} else {
+			parent[ru] = rv;
+			setSize[rv] += setSize[ru];
+		}
+	}
 };
 
 int ninjaAttack(vector<int> ninja, vector<int> enemies, vector <vector<int> >allowedSwaps)
 {
-    int n = ninja.size();
+	DSU dsu(ninja);
+	for(auto v : allowedSwaps) {
+		dsu.combine(ninja[v[0]], ninja[v[1]]);
+	}
 
-    DSU dsu = DSU(n);
-    for(auto v : allowedSwaps){
-        dsu.combine(v[0], v[1]);
-    }
+	int ans = 0;
+	for(int i=0; i<ninja.size(); i++) {
+		if(dsu.root(ninja[i]) != dsu.root(enemies[i])) ans++;
+	}
 
-    // in this vector for each index i => we will store all the indices that are in a graph rooted at i
-    vector<vector<int>> root_setIndices(n, vector<int>(0));
-    for(int i=0; i<n; i++){
-        int root_of_i = dsu.findRoot(i);
-        root_setIndices[root_of_i].push_back(i);
-    }
-
-    int answer = 0;
-    for(auto v : root_setIndices){
-        if(v.size() > 0){
-            // that means this is one connected set of indices (inside this vector)
-
-            // the vector v contains indices that are connected, but we need to compare the nums at these indices
-            // so we will store the nums at these indices in an unordered_map for comparing
-            unordered_map<int,int> ninja_elems;
-            for(int i=0; i<v.size(); i++){
-                int ninja_index = v[i];
-                ninja_elems[ninja[ninja_index]]++;
-            }
-
-            for(int i=0; i<v.size(); i++){
-                int enemies_index = v[i]; 
-
-                // checking whether the num at this index (enemies_index) is present in the ninja_elems or not
-                if(ninja_elems.count(enemies[enemies_index]) == 0) answer++;
-            }
-        }
-    }
-
-    return answer;
+	return ans;
 }

@@ -1,8 +1,9 @@
 /*
 Problem name from spoj : KOICOST - Cost
+https://www.spoj.com/problems/KOICOST/
 */
 
-
+// Time complexity of both approaches = mlogm which comes from sorting the m edges in decreasing order
 // about approach is written in CN CP notes of DSU chapter
 #include<bits/stdc++.h>
 
@@ -95,6 +96,113 @@ int main(){
 	}
 
 	cout<<ans;
+
+	return 0;
+}
+
+
+
+// lastest code by me
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+ll const mod = 1e9;
+
+struct Edge{
+	int u;
+	int v;
+	int w;
+};
+
+class cmp{
+	public:
+	bool operator() (Edge &a, Edge &b) {
+		return a.w < b.w;
+	}
+};
+
+class DSU{
+	public:
+	vector<int> parent;
+	vector<int> size;
+	ll connectedNodesPairs;
+
+	DSU(int n) {
+		for(int i=0; i<=n; i++) parent.push_back(i), size.push_back(0);
+		connectedNodesPairs = 0;
+	}
+
+	int root(int u) {
+		while(parent[u] != u) {
+			parent[u] = parent[parent[u]];
+			u = parent[u];
+		}
+
+		return u;
+	}
+
+	void combine(int u, int v) {
+		int ru = root(u);
+		int rv = root(v);
+
+		if(ru == rv) return;
+
+		ll su = size[u], sv = size[v];
+
+		// subtract the number of pairs that were there in the 2 disconnected components of ru and rv
+		connectedNodesPairs = (connectedNodesPairs - (((su * (su-1)) / 2) % mod)) % mod;
+		connectedNodesPairs = (connectedNodesPairs - (((sv * (sv-1)) / 2) % mod)) % mod;
+
+		if(su > sv) {
+			parent[rv] = ru;
+			su = size[u] = size[u] + size[v];
+		}
+		else {
+			parent[ru] = rv;
+			su = size[v] = size[v] + size[u];
+		}
+
+		// now finally add the number of pairs that are there in the final combined component
+		connectedNodesPairs = (connectedNodesPairs + (((su * (su-1)) / 2) % mod)) % mod;
+	}
+};
+
+int main() {
+	int v, e;
+	// Hard-coded input values
+	v = 6;
+	e = 7;
+	
+	priority_queue<Edge, vector<Edge>, cmp> maxpq;
+	
+	// Hard-coded edge values
+	Edge edges[] = {
+		{1, 2, 10},
+		{2, 3, 2},
+		{4, 3, 5},
+		{6, 3, 15},
+		{3, 5, 4},
+		{4, 5, 3},
+		{2, 6, 6}
+	};
+	
+	for(int i = 0; i < e; i++) {
+		maxpq.push(edges[i]);
+	}
+
+	DSU dsu = DSU(v);
+
+	int ans = 0;
+	while(!maxpq.empty()) {
+		Edge e = maxpq.top();
+		maxpq.pop();
+
+		dsu.combine(e.u, e.v);
+		ans = (ans + ((dsu.connectedNodesPairs * e.w) % mod)) % mod;
+	}
+
+	cout << ans;
 
 	return 0;
 }

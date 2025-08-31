@@ -1,4 +1,6 @@
 /*
+https://classroom.codingninjas.com/app/classroom/me/22205/content/575408/offering/8882639/problem/9593?leftPanelTabValue=PROBLEM
+
 Problem statement can also be read from codestudio with images
 
 Largest Component
@@ -127,9 +129,6 @@ int largestComponent(vector<int> &arr, int n){
 
     int ans = 1;
     for(int a : arr){
-        if(a == 1) continue;  // dont connect 1 with anybody else, since 1 would always have gcd == 1 with everyone else
-                                    // therefore dont make edge of 1 with anyone else
-        
         int currRoot = dsu.root(spf[a]);
 
         a /= spf[a];

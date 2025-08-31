@@ -1,4 +1,6 @@
 /*
+https://classroom.codingninjas.com/app/classroom/me/22205/content/575408/offering/8882638/problem/11698?leftPanelTabValue=PROBLEM
+
 This question is on codestudio by the same name - can have look there at the question
 
 Number of operations to make Graph connected.

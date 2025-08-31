@@ -6,6 +6,7 @@ https://classroom.codingninjas.com/app/classroom/me/22205/content/575411/offerin
 
 // here in the question , its given that edge_weights are greater than 0, so we can easily use djikstra here
 // but look at the solution code once and see how the case of => "if no edge present then return -1", has been handeled
+// and also look at why the distance from source would be 1 and not 0, since product is involved instead of addition
 #include<bits/stdc++.h>
 
 #define ll long long

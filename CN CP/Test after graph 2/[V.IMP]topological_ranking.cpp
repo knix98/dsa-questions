@@ -5,8 +5,17 @@ https://classroom.codingninjas.com/app/classroom/me/22205/content/575412/offerin
 
 
 // latest code by me : we have to get a topological order here. But we cannot use dfs, because although dfs would give us a valid topological order,
-// but we want all the nodes having same rank (as in they are at same level in bfs) to be printed together in ascending order.
+// but we want all the nodes having same rank to be printed together in ascending order.
 // So we can think of it as collecting leaf nodes in each round of cutting of leaf nodes (center of n-ary tree problem)
+/*
+Also note that if we simply do bfs from the center of the graph then that would be wrong result : 
+        1
+        |\
+        v v
+        2<-3
+as can be seen in above graph, if we go by bfs from 1, ans = 1, 2, 3 (which is wrong, because 2 comes after 3)
+but if we do topological sorting way then correct ans = 1, 3, 2 
+*/
 #include<bits/stdc++.h>
 
 vector<int> topo(vector<vector<int>> &graph, vector<int> &outdegree, int n){
